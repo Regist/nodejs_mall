@@ -10,7 +10,7 @@ let encryptUtil = require("../utils/encryptUtil");
 async function regist(user) {
 
     // 根据用户名查询用户
-    let result = await findByUser(user.username);
+    let result = await findByUsername(user.username);
     if (result) {
         throw Error(`用户名${user.username}已经被占用`);
     }
@@ -18,17 +18,37 @@ async function regist(user) {
     // 参数1 : 原文
     // 参数2 : 盐
     user.password = encryptUtil.md5Hmac(user.password, user.username);
-    // 对角色重新赋值
+    // 对角色重新赋值,避免攻击
     user.role = 0;
     // 注册
     result = await User.create(user);
-
+    result.password = "";
     return result;
 
 }
 
-async function deleteUserByUsername() {
+/**
+ * 根据用户名删除用户
+ * url : DELETE, http://localhost:8080/username
+ * @param username 用户名
+ * @returns {Promise<void>}
+ */
+async function deleteUserByUsername(username) {
+    // 根据用户名检查用户是否存在
+    await isExistByUsername(username);
 
+    result = await User.deleteOne({username: username});
+    if (result.n !== 1) {
+        throw Error("删除失败");
+    }
+}
+
+// 根据用户名检查用户是否存在
+async function isExistByUsername(username) {
+    let result = await findByUsername(username);
+    if (!result) {
+        throw Error(`用户名为${username}的用户不存在`);
+    }
 }
 
 /**
@@ -37,11 +57,38 @@ async function deleteUserByUsername() {
  * @param username : 用户名, zhangsan
  * @returns {Promise<*>}
  */
-async function findByUser(username) {
+async function findByUsername(username) {
 
     return await User.findOne({username: username})
 }
 
-async function login() {
+/**
+ * 用户登录
+ * url : POST , http://localhost:8080/
+ * @param user {username:zhangsan,password:123}
+ * @returns {Promise<void>}
+ */
+async function login(user) {
+    // 根据用户名检查用户是否存在
+    await isExistByUsername(user.username);
+    // 用户有没有传递密码过来
+    let password = user.password;
+    if (password == null || password.trim().length == 0) {
+        throw Error("密码不能为空");
+    }
 
+    // 加密密码
+    user.password = encryptUtil.md5Hmac(password, user.username);
+
+    user = await User.findOne(user);
+    user.password = "";
+    return user;
+
+}
+
+module.exports = {
+    regist,
+    login,
+    deleteUserByUsername,
+    findByUsername
 }
