@@ -1,5 +1,7 @@
 let userService = require("../service/user");
 let router = require("express").Router();
+let config = require("../config");
+let encryptUtil = require("../utils/encryptUtil");
 
 /**
  * 用户注册
@@ -41,6 +43,31 @@ router.get("/:username", async (request, response) => {
     } else {
         throw Error(`用户名为${username}的用户不存在`)
     }
+
+})
+
+/**
+ * 用户登录
+ * url : POST , http://localhost:8080/
+ * @param user {username:zhangsan,password:123}
+
+ */
+router.post("/login", async (request, response) => {
+
+    // 登录, session
+    let user = await userService.login(request.body);
+
+    // 定义token
+    let token = {
+        username: user.username,
+        expire: Date.now() + config.TOKEN_EXPIRE
+    };
+
+    // 参数1 : 原文
+    // 参数2 : 密钥
+    let encryptedData = encryptUtil.aesEncrypt(JSON.stringify(token), config.TOKEN_KEY);
+
+    response.success(encryptedData);
 
 })
 
