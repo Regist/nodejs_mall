@@ -9,6 +9,7 @@ let express = require("express");
 let morgan = require("morgan");
 
 let app = express();
+let config = require("./config");
 
 // 使用自定义的加强response的中间件
 app.use(require("./middleware/response_md"))
@@ -26,4 +27,4 @@ app.use((err, request, response, next) => {
 
 })
 
-app.listen(8000)
+app.listen(config.PORT);
