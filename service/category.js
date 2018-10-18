@@ -42,6 +42,7 @@ async function deleteById(id) {
 /**
  * 根据ID更新
  * url : PUT , http://localhost:8080/category/:id
+ * 更新操作的结果 : { n: 1, nModified: 1, ok: 1 }
  * 更新的数据: {name:手机}
  * @returns {Promise<void>}
  */
@@ -52,6 +53,7 @@ async function updateByID(id, category) {
     }
 
     reslut = await Category.updateOne({_id: id}, category);
+
     if (reslut.n !== 1) {
         throw Error(`更新ID为${id}的数据失败`);
     }
