@@ -8,7 +8,7 @@ let encryptUtil = require("../utils/encryptUtil");
  * url : POST , http://localhost:8080/
  * @param user {username:zhangsan,password:123}
  */
-router.post("/", async (request, response) => {
+router.post("/regist", async (request, response) => {
 
     let result = await userService.regist(request.body);
 
@@ -32,42 +32,31 @@ router.delete("/:username", async (request, response) => {
  * @param username : 用户名, zhangsan
  */
 router.get("/:username", async (request, response) => {
-
+    // 获取参数
     let username = request.params.username;
+    // 执行查询
     let result = await userService.findByUsername(username);
-
+    // 查询成功,返回数据
     if (result) {
-
-        result.password = "";
         response.success(result);
     } else {
-        throw Error(`用户名为${username}的用户不存在`)
+        // 查询失败,通知用户原因
+        response.fail(`用户名为${username}的用户不存在`);
     }
 
 })
 
 /**
- * 用户登录
+ * 用户登录,返回的数据是token
  * url : POST , http://localhost:8080/
  * @param user {username:zhangsan,password:123}
 
  */
 router.post("/login", async (request, response) => {
 
-    // 登录, session
-    let user = await userService.login(request.body);
+    let token = await userService.login(request.body);
 
-    // 定义token
-    let token = {
-        username: user.username,
-        expire: Date.now() + config.TOKEN_EXPIRE
-    };
-
-    // 参数1 : 原文
-    // 参数2 : 密钥
-    let encryptedData = encryptUtil.aesEncrypt(JSON.stringify(token), config.TOKEN_KEY);
-
-    response.success(encryptedData);
+    response.success(token);
 
 })
 
