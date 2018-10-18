@@ -3,7 +3,7 @@ let nodeenv = process.env.NODE_ENV;
 
 let config = null;
 // 如果值是prod,就去加载生产环境的配置
-if (nodeenv === "prod") {
+if (nodeenv === "production") {
     config = require("./prod");
 } else {
     // 如果值不是prod,就去加载开发环境的配置

@@ -46,7 +46,7 @@ module.exports = (request, response, next) => {
         }
         // 整个循环结束以后,如果发现用户没有权限访问对应的url地址,就抛出异常
         if (!isGo) {
-            throw Error("您没有访问对应的地址");
+            throw Error("您没有权限访问对应的地址");
         }
     }
 
