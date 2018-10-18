@@ -71,9 +71,16 @@ async function findByPage(page = 1) {
     return await Product.find().skip(offset).limit(config.PAGE_SIZE);
 }
 
+// 根据ID查询商品
+async function findById(id) {
+
+    return await Product.findOne({_id: id});
+}
+
 module.exports = {
     addItem,
     deleteById,
     updateByID,
-    findByPage
+    findByPage,
+    findById
 }
