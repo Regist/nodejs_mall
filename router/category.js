@@ -16,7 +16,7 @@ router.post("/", async (request, response) => {
 
 /**
  * 根据ID删除
- * url : DELETE ,http://localhost:8080/category/id
+ * url : DELETE ,http://localhost:8080/category/001
  * @returns {Promise<void>}
  */
 router.delete("/:id", async (request, response) => {

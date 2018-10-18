@@ -14,6 +14,7 @@ let config = require("./config");
 // 使用自定义的加强response的中间件
 app.use(require("./middleware/response_md"));
 app.use(require("./middleware/token_md"));// 校验用户的登录状态
+app.use(require("./middleware/permission_md"));// 校验权限
 
 // 使用日志功能
 app.use(morgan('combined'));
